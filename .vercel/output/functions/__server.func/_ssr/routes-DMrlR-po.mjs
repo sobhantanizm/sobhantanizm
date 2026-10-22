@@ -258,10 +258,11 @@ function Emblem({ className = "size-10" }) {
 				strokeWidth: "0.8"
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
-				d: "M32 50.2 21.4 17.5 49.1 37.6 14.9 37.6 42.6 17.5Z",
+				d: "M43 16.5C33 11 20 14 18.5 22.5 17 30 27 32.5 35 36 44 40 47 45 41 50.5 35 56 22 55 17.5 48",
+				fill: "none",
 				stroke: "currentColor",
-				strokeWidth: "1.5",
-				strokeLinejoin: "miter"
+				strokeWidth: "3.4",
+				strokeLinecap: "square"
 			})
 		]
 	});
