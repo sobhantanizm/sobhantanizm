@@ -398,7 +398,7 @@ function Hero() {
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Emblem, { className: "pointer-events-none absolute top-8 size-72 text-gold opacity-10" }),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 							className: "stagger-item text-xs tracking-[0.28em] text-gold uppercase",
-							children: "The black temple"
+							children: "The sobhan temple"
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 							className: "stagger-item mt-8 text-gold",

@@ -206,7 +206,7 @@ function Hero() {
         <div className="relative mx-auto flex max-w-3xl flex-col items-center text-center">
           <Emblem className="pointer-events-none absolute top-8 size-72 text-gold opacity-10" />
           <p className="stagger-item text-xs tracking-[0.28em] text-gold uppercase">
-            The black temple
+            The sobhan temple
           </p>
           <div className="stagger-item mt-8 text-gold">
             <Emblem className="mx-auto size-16" />
