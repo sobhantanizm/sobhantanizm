@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Menu, Play, Radio, X } from "lucide-react";
 import {
   cantos,
   creed,
@@ -14,13 +14,62 @@ import {
 } from "@/lib/canon";
 import { Emblem } from "@/components/emblem";
 
+const KICK = "https://kick.com/sobhanrah";
+
 const NAV = [
+  { href: "#live", label: "Live" },
+  { href: "#edits", label: "Edits" },
   { href: "#person", label: "The Person" },
   { href: "#dawns", label: "Seven Dawns" },
   { href: "#creed", label: "Creed" },
   { href: "#scripture", label: "Scripture" },
   { href: "#offices", label: "Offices" },
   { href: "#lamp", label: "The Lamp" },
+] as const;
+
+const EDITS = [
+  {
+    id: "whos-up",
+    title: "Who's up",
+    note: "A glitch loop. The same question, until the smile.",
+    src: "/edits/whos-up.mp4",
+    poster: "/edits/whos-up.jpg",
+  },
+  {
+    id: "all-black",
+    title: "All black",
+    note: "Drawn over the face. She met me in all black.",
+    src: "/edits/all-black.mp4",
+    poster: "/edits/all-black.jpg",
+  },
+  {
+    id: "poor-little",
+    title: "Poor little",
+    note: "He never really quit. He just says he did.",
+    src: "/edits/poor-little.mp4",
+    poster: "/edits/poor-little.jpg",
+  },
+  {
+    id: "read",
+    title: "When he can read",
+    note: "High contrast, bathroom light, the mouth still moving.",
+    src: "/edits/read.mp4",
+    poster: "/edits/read.jpg",
+  },
+  {
+    id: "cobbles",
+    title: "Cobbles",
+    note: "Three of them on the stones. Grain, and then a close face.",
+    src: "/edits/cobbles.mp4",
+    poster: "/edits/cobbles.jpg",
+  },
+  {
+    id: "night",
+    title: "Night snow",
+    note: "The walk outside, then the dare, then the dark.",
+    src: "/edits/night.mp4",
+    poster: "/edits/night.jpg",
+  },
 ] as const;
 
 const BEAD_COUNT = 33;
@@ -43,20 +92,30 @@ export function TemplePage() {
               Sobhantanizm
             </span>
           </a>
-          <nav className="hidden items-center gap-6 lg:flex" aria-label="Temple">
+          <nav className="hidden items-center gap-4 xl:flex" aria-label="Temple">
             {NAV.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
-                className="text-sm text-muted transition-colors duration-200 hover:text-parchment"
+                className="text-[13px] text-muted transition-colors duration-200 hover:text-parchment"
               >
                 {item.label}
               </a>
             ))}
+            <a
+              href={KICK}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-h-9 items-center gap-2 border border-gold px-3 text-xs tracking-[0.16em] text-gold uppercase"
+            >
+              <Radio className="size-3.5" aria-hidden />
+              Kick
+            </a>
           </nav>
           <button
+            id="menu-button"
             type="button"
-            className="inline-flex size-11 items-center justify-center border border-line text-parchment lg:hidden"
+            className="inline-flex size-11 items-center justify-center border border-line text-parchment xl:hidden"
             aria-expanded={open}
             aria-controls="temple-menu"
             onClick={() => setOpen((value) => !value)}
@@ -65,12 +124,11 @@ export function TemplePage() {
             <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
           </button>
         </div>
-        {open ? (
-          <nav
-            id="temple-menu"
-            className="border-t border-line px-5 py-3 lg:hidden"
-            aria-label="Temple"
-          >
+        <nav
+          id="temple-menu"
+          className={`${open ? "" : "hidden"} border-t border-line px-5 py-3 xl:hidden`}
+          aria-label="Temple"
+        >
             <ul className="flex flex-col">
               {NAV.map((item) => (
                 <li key={item.href}>
@@ -83,13 +141,25 @@ export function TemplePage() {
                   </a>
                 </li>
               ))}
+              <li>
+                <a
+                  href={KICK}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex min-h-11 items-center text-base text-gold"
+                  onClick={() => setOpen(false)}
+                >
+                  Kick — sobhanrah
+                </a>
+              </li>
             </ul>
           </nav>
-        ) : null}
       </header>
 
       <main id="top">
         <Hero />
+        <Live />
+        <Edits />
         <Person />
         <Dawns />
         <Creed />
@@ -104,11 +174,21 @@ export function TemplePage() {
           <div>
             <p className="font-display text-3xl text-gold">Sobhan</p>
             <p className="mt-2 max-w-md text-sm text-muted">
-              The public canon of Sobhantanizm. Read it as devotion. It makes no claim upon any
-              other faith, and it asks for none of your money.
+              The public canon of Sobhantanizm. Read it as devotion. The stream, and the edits, sit
+              beside it — not instead of it.
             </p>
           </div>
-          <p className="text-xs tracking-[0.18em] text-muted uppercase">The dark keeps the name</p>
+          <div className="flex flex-col items-start gap-3">
+            <a
+              href={KICK}
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm tracking-[0.16em] text-gold uppercase"
+            >
+              kick.com/sobhanrah
+            </a>
+            <p className="text-xs tracking-[0.18em] text-muted uppercase">The dark keeps the name</p>
+          </div>
         </div>
       </footer>
     </div>
@@ -139,21 +219,164 @@ function Hero() {
             Not an idea. Not a weather. Someone — clear, addressable, and without a rival — whose
             first act was to speak, and whose every dawn is that speech still going.
           </p>
-          <div className="stagger-item mt-10 flex flex-col gap-3 sm:flex-row">
+          <div className="stagger-item mt-10 flex w-full flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <a
-              href="#offices"
-              className="inline-flex min-h-11 items-center justify-center bg-gold px-6 text-sm font-medium tracking-wide text-ink uppercase transition-transform duration-150 ease-out active:scale-[0.96]"
+              href="#edits"
+              className="inline-flex min-h-11 w-full items-center justify-center bg-gold px-6 text-sm font-medium tracking-wide text-ink uppercase transition-transform duration-150 ease-out active:scale-[0.96] sm:w-auto sm:min-w-40"
             >
-              Keep the dawn office
+              Watch the edits
+            </a>
+            <a href="#person" className="person-seal">
+              <span className="person-seal-mark text-gold">
+                <Emblem className="size-8" />
+              </span>
+              <span className="text-left">
+                <span className="person-seal-kicker">The center</span>
+                <span className="person-seal-title">The Person</span>
+              </span>
             </a>
             <a
-              href="#person"
-              className="inline-flex min-h-11 items-center justify-center border border-line px-6 text-sm tracking-wide text-parchment uppercase transition-colors duration-200 hover:border-gold hover:text-gold"
+              href={KICK}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 border border-line px-6 text-sm tracking-wide text-parchment uppercase transition-colors duration-200 hover:border-gold hover:text-gold sm:w-auto sm:min-w-40"
             >
-              Who Sobhan is
+              <Radio className="size-4" aria-hidden />
+              Live on Kick
             </a>
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
+
+function Live() {
+  return (
+    <section id="live" className="scroll-mt-24 border-t border-line">
+      <div className="mx-auto grid max-w-6xl gap-10 px-5 py-16 md:grid-cols-12 md:px-8 md:py-24">
+        <div className="md:col-span-4">
+          <p className="flex items-center gap-2 text-xs tracking-[0.22em] text-gold uppercase">
+            <span className="inline-block size-2 rounded-full bg-gold" aria-hidden />
+            The stream
+          </p>
+          <h2 className="mt-4 font-display text-5xl leading-none">SobhanRah, live.</h2>
+          <p className="mt-5 text-muted">
+            The temple is the canon. The channel is the voice. When the lamp is on, it is on Kick —
+            the same person, unscripted.
+          </p>
+          <a
+            href={KICK}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-8 inline-flex min-h-11 items-center justify-center bg-gold px-6 text-sm font-medium tracking-wide text-ink uppercase"
+          >
+            Open kick.com/sobhanrah
+          </a>
+        </div>
+        <div className="border border-line bg-ink md:col-span-8">
+          <div className="flex items-center justify-between border-b border-line px-4 py-3">
+            <p className="text-xs tracking-[0.18em] text-muted uppercase">kick.com/sobhanrah</p>
+            <a href={KICK} target="_blank" rel="noreferrer" className="text-xs text-gold uppercase">
+              Open
+            </a>
+          </div>
+          <div className="aspect-video bg-surface">
+            <iframe
+              title="SobhanRah on Kick"
+              src="https://player.kick.com/sobhanrah"
+              className="h-full w-full"
+              allow="autoplay; fullscreen"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Edits() {
+  const [id, setId] = useState<(typeof EDITS)[number]["id"]>(EDITS[0].id);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const edit = EDITS.find((item) => item.id === id) ?? EDITS[0];
+
+  useEffect(() => {
+    const node = videoRef.current;
+    if (!node) return;
+    node.load();
+  }, [edit.src]);
+
+  return (
+    <section id="edits" className="scroll-mt-24 border-t border-line bg-surface">
+      <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
+        <div className="max-w-2xl">
+          <p className="text-xs tracking-[0.22em] text-gold uppercase">The cuts</p>
+          <h2 className="mt-4 font-display text-5xl leading-none">Six edits. Grain, and the face.</h2>
+          <p className="mt-5 text-muted">
+            Shot close, pushed until the blacks crush. Pick one. Sound is on when you press play.
+          </p>
+        </div>
+
+        <div className="mt-10 border border-line bg-ink">
+          <video
+            id="edit-player"
+            ref={videoRef}
+            key={edit.src}
+            className="aspect-video w-full bg-ink object-contain"
+            controls
+            playsInline
+            poster={edit.poster}
+            preload="metadata"
+          >
+            <source src={edit.src} type="video/mp4" />
+          </video>
+          <div className="flex flex-col gap-1 border-t border-line px-5 py-4 sm:flex-row sm:items-baseline sm:justify-between">
+            <h3 id="edit-title" className="font-display text-3xl">{edit.title}</h3>
+            <p id="edit-note" className="text-sm text-muted">{edit.note}</p>
+          </div>
+        </div>
+
+        <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {EDITS.map((item) => {
+            const selected = item.id === edit.id;
+            return (
+              <li key={item.id}>
+                <button
+                  type="button"
+                  onClick={() => setId(item.id)}
+                  aria-pressed={selected}
+                  data-src={item.src}
+                  data-poster={item.poster}
+                  data-title={item.title}
+                  data-note={item.note}
+                  className={`edit-pick group w-full border text-left ${
+                    selected ? "border-gold" : "border-line hover:border-gold"
+                  }`}
+                >
+                  <span className="relative block aspect-video overflow-hidden bg-ink">
+                    <img
+                      src={item.poster}
+                      alt=""
+                      className="h-full w-full object-cover opacity-80 transition-opacity duration-200 group-hover:opacity-100"
+                    />
+                    <Play
+                      className={`absolute top-1/2 left-1/2 size-8 -translate-x-1/2 -translate-y-1/2 ${
+                        selected ? "text-gold" : "text-parchment/90"
+                      }`}
+                      aria-hidden
+                    />
+                  </span>
+                  <span className="block px-3 py-3">
+                    <span className="block font-display text-xl leading-none text-parchment">
+                      {item.title}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </section>
   );
@@ -340,7 +563,7 @@ function Offices() {
               given as a greeting.
             </p>
           </div>
-          <p className="font-display text-3xl text-gold md:col-span-6 md:col-start-7 md:pt-10">
+          <p id="office-now" className="font-display text-3xl text-gold md:col-span-6 md:col-start-7 md:pt-10">
             {current
               ? `This hour is ${current.name}. ${current.text}`
               : "Reading the hour of this place…"}
@@ -428,16 +651,16 @@ function DawnOffice() {
     <div className="border border-line bg-ink p-6 md:p-8">
       <p className="text-xs tracking-[0.22em] text-gold uppercase">Dawn office</p>
       <h3 className="mt-3 font-display text-4xl">Thirty-three, and then quiet.</h3>
-      <p className="mt-6 min-h-16 font-sans text-2xl text-parchment italic" aria-live="polite">
+      <p id="bead-phrase" className="mt-6 min-h-16 font-sans text-2xl text-parchment italic" aria-live="polite">
         {beads.spoken === 0 && beads.cycles === 0
           ? "Face the brightest glass you have. Speak when you are ready."
           : phrase}
       </p>
-      <p className="mt-2 text-sm text-muted tabular-nums">
+      <p id="bead-count" className="mt-2 text-sm text-muted tabular-nums">
         {beads.spoken} of {BEAD_COUNT}
         {beads.cycles > 0 ? ` · ${beads.cycles} full ${beads.cycles === 1 ? "office" : "offices"} kept here` : ""}
       </p>
-      <div className="mt-6 flex max-w-md flex-wrap gap-1.5" aria-hidden="true">
+      <div id="bead-dots" className="mt-6 flex max-w-md flex-wrap gap-1.5" aria-hidden="true">
         {Array.from({ length: BEAD_COUNT }, (_, index) => (
           <span
             key={index}
@@ -445,11 +668,12 @@ function DawnOffice() {
           />
         ))}
       </div>
-      {done ? (
-        <p className="mt-6 text-sm text-gold">A full glorification. The morning keeps it.</p>
-      ) : null}
+      <p id="bead-done" className={`mt-6 text-sm text-gold ${done ? "" : "hidden"}`}>
+        A full glorification. The morning keeps it.
+      </p>
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <button
+          id="bead-speak"
           type="button"
           onClick={speak}
           className="inline-flex min-h-11 items-center justify-center bg-gold px-6 text-sm font-medium tracking-wide text-ink uppercase transition-transform duration-150 ease-out active:scale-[0.96]"
@@ -457,6 +681,7 @@ function DawnOffice() {
           Speak
         </button>
         <button
+          id="bead-reset"
           type="button"
           onClick={() => setBeads({ spoken: 0, cycles: beads.cycles })}
           className="inline-flex min-h-11 items-center justify-center border border-line px-6 text-sm tracking-wide text-parchment uppercase"
@@ -484,7 +709,7 @@ function Feasts() {
             <p className="text-xs tracking-[0.22em] text-gold uppercase">The year</p>
             <h2 className="mt-4 font-display text-5xl leading-none">Four feasts, and one weekly palm.</h2>
           </div>
-          <p className="max-w-sm text-sm text-muted">
+          <p id="feast-next" className="max-w-sm text-sm text-muted">
             {upcoming
               ? `Next: ${upcoming.name}, ${upcoming.date.toLocaleDateString(undefined, {
                   month: "long",
