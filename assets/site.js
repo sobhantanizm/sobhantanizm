@@ -187,3 +187,28 @@ paintFeast();
 paintBeads();
 paintLamp(readJson(LAMP));
 setInterval(paintHour, 60000);
+
+function mountPersonRelic() {
+  if (document.querySelector(".person-relic")) return;
+  const seal = document.querySelector("a.person-seal");
+  if (!seal) return;
+  if (!document.querySelector('link[href="assets/relic.css"]')) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "assets/relic.css";
+    document.head.appendChild(link);
+  }
+  const wrap = seal.parentElement;
+  if (wrap && !wrap.classList.contains("hero-rites")) {
+    wrap.className = "hero-rites stagger-item";
+  }
+  const relic = document.createElement("a");
+  relic.href = "#person";
+  relic.className = "person-relic";
+  relic.setAttribute("aria-label", "THE PERSON");
+  relic.innerHTML =
+    '<svg class="person-relic-orbit" viewBox="0 0 120 120" aria-hidden="true"><circle class="orbit-track" cx="60" cy="60" r="57"></circle><circle class="orbit-arc" cx="60" cy="60" r="57"></circle><circle class="orbit-arc orbit-arc-rev" cx="60" cy="60" r="49"></circle><path class="orbit-ticks" d="M60 2.2v7M60 110.8v7M2.2 60h7M110.8 60h7"></path></svg><span class="person-relic-face"><svg viewBox="0 0 64 64" class="person-relic-mark" aria-hidden="true" fill="none"><circle cx="32" cy="32" r="29" stroke="currentColor" stroke-width="1.4"></circle><circle cx="32" cy="32" r="23.5" stroke="currentColor" stroke-width="0.8"></circle><path d="M32 50.2 21.4 17.5 49.1 37.6 14.9 37.6 42.6 17.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="miter"></path></svg><span class="person-relic-title"><span>THE</span><span>PERSON</span></span></span>';
+  seal.replaceWith(relic);
+}
+
+mountPersonRelic();
